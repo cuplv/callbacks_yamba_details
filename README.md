@@ -35,12 +35,12 @@ python driver.py –m ic3 –t [trace] –s [spec file list] --ic3_frames 40 -n 
 
 flags:
 -------
--	-m : selection of mode, in this case “-m ic3” says to use IC3 to check the transition system.  Other modes include “simulation” which checks that the rules do not contradict observed behavior in that trace, bmc for checking using bounded model checking, or check-files to print the trace for manual inspection.
--	``` -t : trace file output from TraceRunner ```
--	``` -s : spec file list separated by semicolons, both enable and allow specs are listed here. ```
--       ``` -ic3_frames : frame parameter which can be tuned```
--       ``` -n : path to nuXmv executable ```
--       ``` -z : enable trace simplification ```
+    -m : selection of mode, in this case “-m ic3” says to use IC3 to check the transition system.  Other modes include “simulation” which checks that the rules do not contradict observed behavior in that trace, bmc for checking using bounded model checking, or check-files to print the trace for manual inspection.
+    -t : trace file output from TraceRunner
+    -s : spec file list separated by semicolons, both enable and allow specs are listed here.
+    -ic3_frames : frame parameter which can be tuned
+    -n : path to nuXmv executable
+    -z : enable trace simplification
 
 Possible outputs:
 -----------------------
