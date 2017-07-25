@@ -1,5 +1,6 @@
 Explanation of verification process:
-==================================== An Android application (app) is implemented in a set of callbacks which are invoked by the framework.  These callbacks are invoked to indicate state changes and events that the app can respond to.  The responses take the form of method invocations on the framework or “callins”.  Our process starts by exercising an app either manually or with the Android UI tester monkey.  This trace can then be combined with a set of rules and encoded in a model. The steps of our verification are listed below and the intermediate files section contains the description of the input to nuXmv.
+==================================== 
+An Android application (app) is implemented in a set of callbacks which are invoked by the framework.  These callbacks are invoked to indicate state changes and events that the app can respond to.  The responses take the form of method invocations on the framework or “callins”.  Our process starts by exercising an app either manually or with the Android UI tester monkey.  This trace can then be combined with a set of rules and encoded in a model. The steps of our verification are listed below and the intermediate files section contains the description of the input to nuXmv.
 
 Tools:
 ======
