@@ -31,7 +31,8 @@ Here, the developer uses an [AsyncTask] to do some network operations, which inv
           // parent Activity has been paused.
 183:      progress.dismiss();
         }
-      }```
+      }
+```
 
 To fix some terminology, we refer to an app-implemented method that the framework invokes as a _callback_ (e.g., `Post.onPostExecute()`) and a framework-implemented method that the app invokes as a _callin_ (e.g., `Dialog.dismiss()`).
 
