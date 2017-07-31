@@ -13,7 +13,7 @@ The defect in the [Yamba] app comes from a misuse of a [Dialog] object on [line 
 
 A [Dialog] object represents a modal dialog in the user interface. The `Dialog.dismiss()` method is used to hide the dialog, but a pre-condition for calling this method is that the user interface is visible. That is, it must only be called while the parent [Activity] object is in a resumed state.
 
-Here, the developer uses an [AsyncTask] to do some network operations, which invokes the_callback `onPostExecute` on completion. This callback dismisses a dialog via `progress.dismiss()`, which was used to show the user that the network operation was running:
+Here, the developer uses an [AsyncTask] to do some network operations, which invokes the callback `onPostExecute` on completion. This callback dismisses a dialog via `progress.dismiss()`, which was used to show the user that the network operation was running:
 
 ```java
       class PostTask extends AsyncTask<…> {
@@ -34,7 +34,7 @@ Here, the developer uses an [AsyncTask] to do some network operations, which inv
       }
 ```
 
-To fix some terminology, we refer to an app-implemented method that the framework invokes as a _callback_ (e.g., `Post.onPostExecute()`) and a framework-implemented method that the app invokes as a _callin_ (e.g., `Dialog.dismiss()`).
+To fix some terminology, we refer to an app-implemented method that the framework invokes as a _callback_ (e.g., `PostTask.onPostExecute()`) and a framework-implemented method that the app invokes as a _callin_ (e.g., `Dialog.dismiss()`).
 
 This [AsyncTask] is started by the user clicking a button in this click handler defined on [line 94][Yamba Bug onClick]:
 
@@ -51,7 +51,7 @@ This [AsyncTask] is started by the user clicking a button in this click handler 
 
 But how could the UI not be visible when `progress.dismiss()` is called? Many ways, but one example is that rotating the phone temporarily makes the UI not visible while it is redrawn. If the completion of this `PostTask` and this redrawing happen to coincide, then the application crashes. It seems likely that this situation would be quite difficult to reproduce in testing.
 
-This bug quite insidious because even assuming the app developer has perfect knowledge on what protocol she should follow, the app developer has to think through, "I need to guarantee that `progress.dismiss()` is only called when progress is visible. So when is it possible for the `onPostExecute` handler to be triggered? Could it be triggered when progress is not visible?" And in this case, unfortunately yes. Worse yet, it would seem quite natural for even this knowledgeable app developer to wrongly assume that the framework would guarantee that progress is visible when `onPostExecute` is called—the `AsyncTask` was after all designed to make UI updates and background tasks "easy."
+This bug is quite insidious because even assuming the app developer has perfect knowledge on what protocol she should follow, the app developer has to think through, "I need to guarantee that `progress.dismiss()` is only called when progress is visible. So when is it possible for the `onPostExecute` handler to be triggered? Could it be triggered when progress is not visible?" And in this case, unfortunately yes. Worse yet, it would seem quite natural for even this knowledgeable app developer to wrongly assume that the framework would guarantee that progress is visible when `onPostExecute` is called—the `AsyncTask` was after all designed to make UI updates and background tasks "easy."
 
 Supporting formal and tool-assisted reasoning of this form is the essence of Verivita.
 
@@ -241,4 +241,4 @@ The module encodes in the initial condition `INIT` and in the transition relatio
 
 message in the case.
   
-- The submodule `mod314` encodes the frame condition of the message variables. Each specification defines when a message should be enabled/disabled or allowed/disallowed. If no specifications is matched, the state of the message variables must not change in the system. This condition must be explicitly described in SMV.
+- The submodule `mod314` encodes the frame condition of the message variables. Each specification defines when a message should be enabled/disabled or allowed/disallowed. If no specification is matched, the state of the message variables must not change in the system. This condition must be explicitly described in SMV.
