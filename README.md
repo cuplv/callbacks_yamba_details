@@ -103,40 +103,36 @@ The possible output of the verifier is "safe" or a counter-example. "Safe" means
 
 Here, the counter-example showing the bug described above is given in [verifier_result.txt](verifier_result.txt). After some general statistics, there are two main sections in the output:
 
--	**Simplified trace**. This output shows a more readable and simplification of the input trace. The simplification drops all callins that are not mentioned by the specification.  Additionally, it drops callbacks that are not in the specification and do not contain any relevant callins.
-
+- **Simplified trace**. This output shows a more readable and simplification of the input trace. The simplification drops all callins that are not mentioned by the specification.  Additionally, it drops callbacks that are not in the specification and do not contain any relevant callins.
   ```
----Simplified Trace---
-[18] [CB] [ENTRY] void com.marakana.android.yamba.MainActivity.<init>() (43ae884) 
-[18] [CB] [EXIT] NULL = void com.marakana.android.yamba.MainActivity.<init>() (43ae884) 
-[62] [CB] [ENTRY] void com.marakana.android.yamba.MainActivity.onCreate(android.os.Bundle) (43ae884,NULL) 
-  [1669] [CI] [ENTRY] void android.app.ListFragment.<init>() (eec2e40)
-```
-
+  ---Simplified Trace---
+  [18] [CB] [ENTRY] void com.marakana.android.yamba.MainActivity.<init>() (43ae884) 
+  [18] [CB] [EXIT] NULL = void com.marakana.android.yamba.MainActivity.<init>() (43ae884) 
+  [62] [CB] [ENTRY] void com.marakana.android.yamba.MainActivity.onCreate(android.os.Bundle) (43ae884,NULL) 
+    [1669] [CI] [ENTRY] void android.app.ListFragment.<init>() (eec2e40)
+  ```
   The above shows the four three lines of the simplified trace from this example. It shows the `MainActivity` being constructed and then its `onCreate` callback being invoked. With in the `onCreate` callback, a `ListFragment` is constructed. The list at the end of the line in parentheses show the object identifiers.
 
--	**Counter-example**. This output shows a sequence of callbacks and callins that could lead to an error. The counter-example shows at each step the rules that applied to help with debugging both the specification and the app. This counter-example is a human-readable decoding of the nuXmv output based on the specifications and the input trace.
-
+- **Counter-example**. This output shows a sequence of callbacks and callins that could lead to an error. The counter-example shows at each step the rules that applied to help with debugging both the specification and the app. This counter-example is a human-readable decoding of the nuXmv output based on the specifications and the input trace.
   ```
-----------------------------------------
-Step: 16
-----------------------------------------
-[13466] [CB] [ENTRY] void com.marakana.android.yamba.SubActivity.onPause() (b83e03e) 
-    Matched specifications:
-    ...
-----------------------------------------
-Step: 17
-----------------------------------------
-[13478] [CB] [ENTRY] void com.marakana.android.yamba.StatusFragment$PostTask.onPostExecute(java.lang.Object) (758671e,Please update your username and password) 
-    Matched specifications:
-    SPEC (((TRUE)[*]); [CB] [ENTRY] [758671e] void com.marakana.android.yamba.StatusFragment$PostTask.onPostExecute(Please update your username and password : java.lang.Object)) |- [CB] [ENTRY] [758671e] void com.marakana.android.yamba.StatusFragment$PostTask.onPostExecute(Please update your username and password : java.lang.Object)
-----------------------------------------
-Step: 18
-----------------------------------------
-[13479] [CI] [ENTRY] void android.app.Dialog.dismiss() (cc1bfcc) 
-    Reached an error state in step 18!
-```
-
+  ----------------------------------------
+  Step: 16
+  ----------------------------------------
+  [13466] [CB] [ENTRY] void com.marakana.android.yamba.SubActivity.onPause() (b83e03e) 
+      Matched specifications:
+      ...
+  ----------------------------------------
+  Step: 17
+  ----------------------------------------
+  [13478] [CB] [ENTRY] void com.marakana.android.yamba.StatusFragment$PostTask.onPostExecute(java.lang.Object) (758671e,Please update your username and password) 
+      Matched specifications:
+      SPEC (((TRUE)[*]); [CB] [ENTRY] [758671e] void com.marakana.android.yamba.StatusFragment$PostTask.onPostExecute(Please update your username and password : java.lang.Object)) |- [CB] [ENTRY] [758671e] void com.marakana.android.yamba.StatusFragment$PostTask.onPostExecute(Please update your username and password : java.lang.Object)
+  ----------------------------------------
+  Step: 18
+  ----------------------------------------
+  [13479] [CI] [ENTRY] void android.app.Dialog.dismiss() (cc1bfcc) 
+      Reached an error state in step 18!
+  ```
   The above shows the final three steps showing the end of the error trace: `onPause` followed by `onPostExecute` followed by `dismiss`. The "matched specification" in step 17 says that the `onPostExecute` disables itself.
 
 ## Intermediate Model Files 
@@ -208,37 +204,27 @@ The `main` module further instantiates different submodules, and the composition
 The submodules in the `main` module are as follows:
 
 - The submodule `m1` of type `mod1` defines all the possible reordering of the callbacks seen in the recorded trace.
-  
   The possible reordering are then restricted by the constraints imposed by lifestate specifications.
   
 - The submodules (named `m2` , ..., `m313` of type `mod2`, ..., `mod314`) encode the acceptance of a specification and the effect on the system when the regular expression is matched by the current execution.
-  
   For example, the module `mod2` encodes the specification
-
   ```
-(((TRUE)[*]); [CB] [ENTRY] [b83e03e] void com.marakana.android.yamba.SubActivity.onStop()) |+ [CB] [ENTRY] [b83e03e] void com.marakana.android.yamba.SubActivity.onDestroy()
-```
- 
+  (((TRUE)[*]); [CB] [ENTRY] [b83e03e] void com.marakana.android.yamba.SubActivity.onStop()) |+ [CB] [ENTRY] [b83e03e] void com.marakana.android.yamba.SubActivity.onDestroy()
+  ```
   The specification says that, every time the system executes the callback
-
   ```
-[CB] [ENTRY] [b83e03e] void com.marakana.android.yamba.SubActivity.onStop())
-```
-
+  [CB] [ENTRY] [b83e03e] void com.marakana.android.yamba.SubActivity.onStop())
+  ```
   then the callback
-
   ```
-[CB] [ENTRY] [b83e03e] void com.marakana.android.yamba.SubActivity.onDestroy()
-```
-
+  [CB] [ENTRY] [b83e03e] void com.marakana.android.yamba.SubActivity.onDestroy()
+  ```
   must be enabled.
   
   The module encodes in the initial condition `INIT` and in the transition relation `TRANS` a deterministic automaton that accepts the language of the regular expression and that enables the
-
   ```
-[CB] [ENTRY] [b83e03e] void com.marakana.android.yamba.SubActivity.onDestroy()
-```
-
+  [CB] [ENTRY] [b83e03e] void com.marakana.android.yamba.SubActivity.onDestroy()
+  ```
   message in the case.
   
 - The submodule `mod314` encodes the frame condition of the message variables. Each specification defines when a message should be enabled/disabled or allowed/disallowed. If no specification is matched, the state of the message variables must not change in the system. This condition must be explicitly described in SMV.
