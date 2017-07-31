@@ -45,7 +45,8 @@ This [AsyncTask] is started by the user clicking a button in this click handler 
           postTask.execute(…);
           … 
         }
-      });```
+      });
+```
 
 But how could the UI not be visible when `progress.dismiss()` is called? Many ways, but one example is that rotating the phone temporarily makes the UI not visible while it is redrawn. If the completion of this `PostTask` and this redrawing happen to coincide, then the application crashes. It seems likely that this situation would be quite difficult to reproduce in testing.
 
@@ -78,7 +79,8 @@ The key files cached in this repository consists of the following.
 ├── simplified_models/
 │   ├── simplified_model.smv
 │   └── simplified_model_no_def.smv
-└── verifier_result.txt```
+└── verifier_result.txt
+```
 
 ## Verification Inputs
 
@@ -107,7 +109,8 @@ Here, the counter-example showing the bug described above is given in [verifier_
 [18] [CB] [ENTRY] void com.marakana.android.yamba.MainActivity.<init>() (43ae884) 
 [18] [CB] [EXIT] NULL = void com.marakana.android.yamba.MainActivity.<init>() (43ae884) 
 [62] [CB] [ENTRY] void com.marakana.android.yamba.MainActivity.onCreate(android.os.Bundle) (43ae884,NULL) 
-  [1669] [CI] [ENTRY] void android.app.ListFragment.<init>() (eec2e40)```
+  [1669] [CI] [ENTRY] void android.app.ListFragment.<init>() (eec2e40)
+```
 
 The above shows the four three lines of the simplified trace from this example. It shows the `MainActivity` being constructed and then its `onCreate` callback being invoked. With in the `onCreate` callback, a `ListFragment` is constructed. The list at the end of the line in parentheses show the object identifiers.
 
@@ -130,7 +133,8 @@ Step: 17
 Step: 18
 ----------------------------------------
 [13479] [CI] [ENTRY] void android.app.Dialog.dismiss() (cc1bfcc) 
-    Reached an error state in step 18!```
+    Reached an error state in step 18!
+```
 
 The above shows the final three steps showing the end of the error trace: `onPause` followed by `onPostExecute` followed by `dismiss`. The "matched specification" in step 17 says that the `onPostExecute` disables itself.
 
@@ -163,7 +167,8 @@ Both the SMV models can be verified reusing the same command file `command.cmd`:
 
 ```
 $ nuXmv -source command.cmd ./simplified_model.smv
-$ nuXmv -source command.cmd ./simplified_model_no_def.smv```
+$ nuXmv -source command.cmd ./simplified_model_no_def.smv
+```
 
 #### Structure of the SMV model
 
@@ -183,7 +188,8 @@ A trace also records the return value of callbacks and callins. Return values of
 The format of the name used for the message variables is: `enabled_<message>` where `<message>` is the callin or the callback. For example,
 
 ```
-"enabled_[CB]_[ENTRY]_android.view.View com.marakana.android.yamba.TimelineFragment.onCreateView(android.view.LayoutInflater,android.view.ViewGroup,android.os.Bundle)(212079b,62c574e,NULL,NULL)" : boolean;```
+"enabled_[CB]_[ENTRY]_android.view.View com.marakana.android.yamba.TimelineFragment.onCreateView(android.view.LayoutInflater,android.view.ViewGroup,android.os.Bundle)(212079b,62c574e,NULL,NULL)" : boolean;
+```
 
 is the callback `com.marakana.android.yamba.TimelineFragment.onCreateView` from the trace that was invoked on the object `212079b` of type `android.view.View`, with arguments `62c574e`, `NULL`, `NULL`, of types `android.view.LayoutInflater`,`android.view.ViewGroup`,and `android.os.Bundle` respectively. The numbers `212079b` and `62c574e` are the addresses of the objects recorded in the concrete execution.
 
@@ -209,24 +215,28 @@ The possible reordering are then restricted by the constraints imposed by lifest
 For example, the module `mod2` encodes the specification
 
 ```
-(((TRUE)[*]); [CB] [ENTRY] [b83e03e] void com.marakana.android.yamba.SubActivity.onStop()) |+ [CB] [ENTRY] [b83e03e] void com.marakana.android.yamba.SubActivity.onDestroy()```
+(((TRUE)[*]); [CB] [ENTRY] [b83e03e] void com.marakana.android.yamba.SubActivity.onStop()) |+ [CB] [ENTRY] [b83e03e] void com.marakana.android.yamba.SubActivity.onDestroy()
+```
  
 The specification says that, every time the system executes the callback
 
 ```
-[CB] [ENTRY] [b83e03e] void com.marakana.android.yamba.SubActivity.onStop())```
+[CB] [ENTRY] [b83e03e] void com.marakana.android.yamba.SubActivity.onStop())
+```
 
 then the callback
 
 ```
-[CB] [ENTRY] [b83e03e] void com.marakana.android.yamba.SubActivity.onDestroy()```
+[CB] [ENTRY] [b83e03e] void com.marakana.android.yamba.SubActivity.onDestroy()
+```
 
 must be enabled.
   
 The module encodes in the initial condition `INIT` and in the transition relation `TRANS` a deterministic automaton that accepts the language of the regular expression and that enables the
 
 ```
-[CB] [ENTRY] [b83e03e] void com.marakana.android.yamba.SubActivity.onDestroy()```
+[CB] [ENTRY] [b83e03e] void com.marakana.android.yamba.SubActivity.onDestroy()
+```
 
 message in the case.
   
